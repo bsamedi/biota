@@ -30,44 +30,59 @@ class SubsequenceIndex():
         self.searchIn = str
         self.root = IndexNode()
         self.root.positions = set(range(len(self.searchIn)))
-    
+
     # Find any number of leading characters from "what" in the string provided at instance creation
     def find(self, what):
         for start, end in self.findByNodes(self.root, what, 0):
             yield self.searchIn[start:end]
-    
+
     def findByNode(self, nodeThis, what, whatIndex):
         positions = []
         if len(what) == 0 and lengthFound > 0:
             positions += nodeThis.positionsWithChildren()
-        
+
         elif len(what) > 0:
             nodeNext = self.getChild(nodeThis, what[0] )
-        
+
         return positions
 
     def buildChild(self, node, key):
         pass
-    
+
     def positionsWithChildren(self):
         return self.position + [ i-1 for i in [child.positionsWithChildren() for child in self.children.itervalues() if child != None ]]
 
-class IndexNode(namedtuple('IndexNode', 'positions,children')):
+class IndexNode(namedtuple('IndexNode', 'children, positions')):
     class DEAD_END:
         pass
 
     @staticmethod
     def new():
         return IndexNode(positions = set(), children = {})
-        
+
+    @staticmethod
+    def isDeadEnd(node):
+        return node == IndexNode.DEAD_END
+
+    @staticmethod
+    def isNode(node):
+        return isinstance(node, IndexNode)
+
     def childExists(self, key):
         return key in self.children
-    
+
     def getChild(self, key):
-        pass
-    
-    def setChild(self, key, addresses):
-        pass
-        
+        return self.children[key]
+
+    def addChild(self, key, addresses):
+        if len(addresses) > 0:
+            self.children[key] = IndexNode(children = {}, positions = addresses)
+        else:
+            self.children[key] = IndexNode.DEAD_END
+
     def positionsIncludinChildren(self):
-        pass
+        all = list(self.positions)
+        for child in self.children.values():
+            for pos in child.positionsIncludinChildren():
+                all.append(pos-1)
+        return all
