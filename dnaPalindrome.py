@@ -15,29 +15,30 @@ class SubsequenceIndex():
     
     # Find any number of leading characters from "what" in the string provided at instance creation
     def find(self, what):
-        for i in self.findByNodes(self.root, what):
-            yield self.searchIn[i]
+        for start, end in self.findByNodes(self.root, what, 0):
+            yield self.searchIn[start:end]
     
-    def findByNodes(self, nodeThis, what):
+    def findByNodes(self, nodeThis, what, lengthFound):
         positions = []
-        if len(what) > 0:
-            what0 = what[0]
-            if what0 in nodeThis.children:
-                nodeNext = nodeThis.children[what0]
-            else:
-                # calculate child node
-                found = set([ i for i in nodeThis.positions if self.searchIn[i]==what0 ])
-                if len(found)>0:
-                    nodeNext = IndexNode()
-                    nodeNext.positions = found
-                    nodeThis.positions -= found
-                else:
-                    nodeNext = None
-                nodeThis.children[what0] = nodeNext
-            if nodeNext != None:
-                for i in nodeNext.positions:
-                    yield i
-                self.findByNodes(nodeNext, what[1:])
+        if len(what) == 0 and lengthFound > 0:
+            positions += nodeThis.positionsWithChildren()
+        
+        elif len(what) > 0:
+            nodeNext = self.getChild(nodeThis, what[0] )
+        
+        return positions
+
+    def getChild(self, node, key):
+        if not key in node.children:
+            self.buildChild(node, key)
+
+        return node.children[key]
+    
+    def buildChild(self, node, key):
+        pass
+    
+    def positionsWithChildren(self):
+        return self.position + [ i-1 for i in [child.positionsWithChildren() for child in self.children.itervalues() if child != None ]]
 
 class IndexNode():
     def __init__(self):
