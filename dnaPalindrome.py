@@ -81,8 +81,8 @@ class IndexNode(namedtuple('IndexNode', 'children, positions')):
             self.children[key] = IndexNode.DEAD_END
 
     def positionsIncludinChildren(self):
-        all = self.positions
+        all = set()
+        all |= self.positions
         for child in self.children.values():
-            for pos in child.positionsIncludinChildren():
-                all.add(pos-1)
+            all |= child.positionsIncludinChildren()
         return all

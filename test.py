@@ -51,19 +51,26 @@ class testChildOps(unittest.TestCase):
         i.addChild('T', set([17, 26]))
         self.assertEquals(
             set( root.positionsIncludinChildren() ),
-            set([i-1 for i in [2,3,42]] + [i-2 for i in [17, 26]]))
+            set([2,3,42,17,26]))
 
-    def testositionsRecursive2(self):
+    def testositionsRecursive3(self):
         root = IndexNode.new()
         root.addChild('42', set([2,3,42]))
         root.addChild('bravo', set([3, 100, 42]))
         i = root.getChild('42')
         i.addChild('T', set([4, 17, 26]))
         found = root.positionsIncludinChildren()
-        expected = set(
-            [i-1 for i in [2,3,42, 3,100,42]] +
-            [i-2 for i in [4, 17, 26]] )
+        expected = set([2,3,42, 3,100,42,4, 17, 26])
         self.assertEquals(found, expected)
+
+    def testositionsRecursive_Twice(self):
+        root = IndexNode.new()
+        root.addChild('A', set([1]))
+        root.addChild('B', set([4]))
+        self.assertEquals(len(root.positions), 0)
+        root.positionsIncludinChildren()
+        found = root.positionsIncludinChildren()
+        self.assertEquals(len(root.positions), 0)
 
 # class testPalindromsElementary(unittest.TestCase):
     # def testZero(self):
