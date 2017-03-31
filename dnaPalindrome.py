@@ -1,4 +1,5 @@
 import string
+from collections import namedtuple
 
 def dnaPalindromes(sequence):
     reversed = sequence[::-1].translate(string.maketrans('ATGC','TACG'))
@@ -6,6 +7,23 @@ def dnaPalindromes(sequence):
     for i in range(len(sequence)):
         for res in searcher.find(sequence[i:]):
             yield res
+"""
+    Search algorithm is as follows:
+        initially there is the root node with no children and all Where to search list positions
+    Search request:
+        let current node be the root
+        for What to search position in 0 .. What to search length:
+            if node does not have child, build it:
+                for every address in current node positions:
+                    if Where to search[ address ] equals current What to search:
+                        add address to the Found list
+                add child with Found list, optionally empty
+            Get child for What to search
+            If child is DEAD END:
+                return What to search[ 0 .. current position ], with recursive addresses of this node and all its children
+            else:
+                set Current node to be the Child
+"""
 
 class SubsequenceIndex():
     def __init__(self, str):
@@ -18,7 +36,7 @@ class SubsequenceIndex():
         for start, end in self.findByNodes(self.root, what, 0):
             yield self.searchIn[start:end]
     
-    def findByNodes(self, nodeThis, what, lengthFound):
+    def findByNode(self, nodeThis, what, whatIndex):
         positions = []
         if len(what) == 0 and lengthFound > 0:
             positions += nodeThis.positionsWithChildren()
@@ -28,19 +46,28 @@ class SubsequenceIndex():
         
         return positions
 
-    def getChild(self, node, key):
-        if not key in node.children:
-            self.buildChild(node, key)
-
-        return node.children[key]
-    
     def buildChild(self, node, key):
         pass
     
     def positionsWithChildren(self):
         return self.position + [ i-1 for i in [child.positionsWithChildren() for child in self.children.itervalues() if child != None ]]
 
-class IndexNode():
-    def __init__(self):
-        self.positions = set()
-        self.children = {}
+class IndexNode(namedtuple('IndexNode', 'positions,children')):
+    class DEAD_END:
+        pass
+
+    @staticmethod
+    def new():
+        return IndexNode(positions = set(), children = {})
+        
+    def childExists(self, key):
+        return key in self.children
+    
+    def getChild(self, key):
+        pass
+    
+    def setChild(self, key, addresses):
+        pass
+        
+    def positionsIncludinChildren(self):
+        pass

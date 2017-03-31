@@ -4,15 +4,18 @@ import mock
 from mock import patch
 from mock import Mock
 
-from dnaPalindrome import dnaPalindromes
-from dnaPalindrome import SubsequenceIndex
+import dnaPalindrome
 
 class testChildOps(unittest.TestCase):
-    @patch('dnaPalindrome.SubsequenceIndex')
-    def testgetChild(self, mock_index):
-        s = mock_index()
-        s.getChild = Mock(return_value=3)
-        self.assertEqual(s.getChild(), 4)
+    def testNewIndexNode(self):
+        i = dnaPalindrome.IndexNode.new()
+        self.assertEqual(i.positions, set())
+        self.assertEqual(i.children, {})
+        
+    #@patch('dnaPalindrome.IndexNode')
+    def testChildExists(self):
+        i = dnaPalindrome.IndexNode.new()
+        self.assertEquals(i.childExists('a'), False)
 
 # class testPalindromsElementary(unittest.TestCase):
     # def testZero(self):
