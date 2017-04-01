@@ -36,13 +36,13 @@ class testChildOps(unittest.TestCase):
 
     def testositionsRecursive0(self):
         i = IndexNode.new()
-        self.assertEquals(i.positionsIncludinChildren(), set([]))
+        self.assertEquals(i.positionsIncludingChildren(), set([]))
 
     def testositionsRecursive1(self):
         root = IndexNode.new()
         root.addChild('42', set([2,3,42]))
         i = root.getChild('42')
-        self.assertEquals(i.positionsIncludinChildren(), set([2,3,42]))
+        self.assertEquals(i.positionsIncludingChildren(), set([2,3,42]))
 
     def testositionsRecursive2(self):
         root = IndexNode.new()
@@ -50,7 +50,7 @@ class testChildOps(unittest.TestCase):
         i = root.getChild('42')
         i.addChild('T', set([17, 26]))
         self.assertEquals(
-            set( root.positionsIncludinChildren() ),
+            set( root.positionsIncludingChildren() ),
             set([2,3,42,17,26]))
 
     def testositionsRecursive3(self):
@@ -59,7 +59,7 @@ class testChildOps(unittest.TestCase):
         root.addChild('bravo', set([3, 100, 42]))
         i = root.getChild('42')
         i.addChild('T', set([4, 17, 26]))
-        found = root.positionsIncludinChildren()
+        found = root.positionsIncludingChildren()
         expected = set([2,3,42, 3,100,42,4, 17, 26])
         self.assertEquals(found, expected)
 
@@ -68,9 +68,27 @@ class testChildOps(unittest.TestCase):
         root.addChild('A', set([1]))
         root.addChild('B', set([4]))
         self.assertEquals(len(root.positions), 0)
-        root.positionsIncludinChildren()
-        found = root.positionsIncludinChildren()
+        root.positionsIncludingChildren()
+        found = root.positionsIncludingChildren()
         self.assertEquals(len(root.positions), 0)
+
+from dnaPalindrome import SubsequenceIndex
+
+class testSequenceIndex(unittest.TestCase):
+    def test1(self):
+        ix = SubsequenceIndex('abc')
+        found = ix.find('a')
+        self.assertEqual(found, ('a', set([0])))
+
+    def test2(self):
+        ix = SubsequenceIndex('abc')
+        found = ix.find('bc')
+        self.assertEqual(found, ('bc', set([1])))
+
+    def test3(self):
+        ix = SubsequenceIndex('abc')
+        found = ix.find('efg')
+        self.assertEqual(found, ('', set()))
 
 # class testPalindromsElementary(unittest.TestCase):
     # def testZero(self):

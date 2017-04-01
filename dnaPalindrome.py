@@ -8,7 +8,7 @@ def dnaPalindromes(sequence):
         for res in searcher.find(sequence[i:]):
             yield res
 """
-    Search algorithm is as follows:
+    Search algorithm:
         initially there is the root node with no children and all Where to search list positions
     Search request:
         let current node be the root
@@ -27,30 +27,38 @@ def dnaPalindromes(sequence):
 
 class SubsequenceIndex():
     def __init__(self, str):
-        self.searchIn = str
-        self.root = IndexNode()
-        self.root.positions = set(range(len(self.searchIn)))
+        self.where = str
+        self.root = IndexNode.new()
+        self.root.positions.update(range(len(self.where)))
 
     # Find any number of leading characters from "what" in the string provided at instance creation
     def find(self, what):
-        for start, end in self.findByNodes(self.root, what, 0):
-            yield self.searchIn[start:end]
-
-    def findByNode(self, nodeThis, what, whatIndex):
-        positions = []
-        if len(what) == 0 and lengthFound > 0:
-            positions += nodeThis.positionsWithChildren()
-
-        elif len(what) > 0:
-            nodeNext = self.getChild(nodeThis, what[0] )
-
-        return positions
-
-    def buildChild(self, node, key):
-        pass
-
-    def positionsWithChildren(self):
-        return self.position + [ i-1 for i in [child.positionsWithChildren() for child in self.children.itervalues() if child != None ]]
+        node = self.root
+        #print('\n1')
+        for iWhat in range(len(what)):
+            #print('2')
+            if not node.childExists(what[iWhat]):
+                #print('3')
+                found = set()
+                for iWhere in node.positions:
+                    #print('4 found {}'.format(found))
+                    if self.where[iWhere] == what[iWhat]:
+                        #print('5')
+                        found.add(iWhere)
+                #print('6 found {}'.format(found))
+                node.addChild(what[iWhat], found)
+                node.positions.difference_update(found)
+            nextNode = node.getChild(what[iWhat])
+            #print('7')
+            if IndexNode.isDeadEnd(nextNode):
+                #print('8')
+                break
+            node = nextNode
+        #print('9 {}'.format(self.root))
+        if iWhat > 0:
+            return (what[0:iWhat+1], node.positionsIncludingChildren())
+        else:
+            return ('', set())
 
 class IndexNode(namedtuple('IndexNode', 'children, positions')):
     class DEAD_END:
@@ -80,9 +88,10 @@ class IndexNode(namedtuple('IndexNode', 'children, positions')):
         else:
             self.children[key] = IndexNode.DEAD_END
 
-    def positionsIncludinChildren(self):
+    def positionsIncludingChildren(self):
         all = set()
         all |= self.positions
         for child in self.children.values():
-            all |= child.positionsIncludinChildren()
+            if not IndexNode.isDeadEnd(child):
+                all |= child.positionsIncludingChildren()
         return all
