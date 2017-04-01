@@ -32,18 +32,16 @@ class SubsequenceIndex():
         self.root.positions.update(range(len(self.where)))
 
     # Find any number of leading characters from "what" in the string provided at instance creation
-    def find(self, what):
+    def find(self, what, minLength=1):
         node = self.root
         lastFoundNode = None
         for iWhat in range(len(what)):
-            node = self.getChild(node, what[iWhat])
-            if IndexNode.isDeadEnd(node):
+            nextNode = self.getChild(node, what[iWhat])
+            if IndexNode.isDeadEnd(nextNode):
                 break
-            lastFoundNode = node
-        if lastFoundNode == None:
-            return ('', set())
-        else:
-            return (what[0:iWhat+1], lastFoundNode.positionsIncludingChildren())
+            else:
+                yield (what[0:iWhat+1], nextNode.positionsIncludingChildren())
+            node = nextNode
 
     def getChild(self, node, key):
         if node.childExists(key):
@@ -59,16 +57,13 @@ class SubsequenceIndex():
         return child
 
 class IndexNode(namedtuple('IndexNode', 'children, positions')):
-    class DEAD_END:
-        pass
-
     @staticmethod
     def new():
         return IndexNode(positions = set(), children = {})
 
     @staticmethod
     def isDeadEnd(node):
-        return node == IndexNode.DEAD_END
+        return node == None
 
     @staticmethod
     def isNode(node):
@@ -84,7 +79,7 @@ class IndexNode(namedtuple('IndexNode', 'children, positions')):
         if len(addresses) > 0:
             newNode = IndexNode(children = {}, positions = addresses)
         else:
-            newNode = IndexNode.DEAD_END
+            newNode = None
         self.children[key] = newNode
         return newNode
 
