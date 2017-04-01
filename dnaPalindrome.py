@@ -34,31 +34,29 @@ class SubsequenceIndex():
     # Find any number of leading characters from "what" in the string provided at instance creation
     def find(self, what):
         node = self.root
-        #print('\n1')
+        lastFoundNode = None
         for iWhat in range(len(what)):
-            #print('2')
-            if not node.childExists(what[iWhat]):
-                #print('3')
-                found = set()
-                for iWhere in node.positions:
-                    #print('4 found {}'.format(found))
-                    if self.where[iWhere] == what[iWhat]:
-                        #print('5')
-                        found.add(iWhere)
-                #print('6 found {}'.format(found))
-                node.addChild(what[iWhat], found)
-                node.positions.difference_update(found)
-            nextNode = node.getChild(what[iWhat])
-            #print('7')
-            if IndexNode.isDeadEnd(nextNode):
-                #print('8')
+            node = self.getChild(node, what[iWhat])
+            if IndexNode.isDeadEnd(node):
                 break
-            node = nextNode
-        #print('9 {}'.format(self.root))
-        if iWhat > 0:
-            return (what[0:iWhat+1], node.positionsIncludingChildren())
-        else:
+            lastFoundNode = node
+        if lastFoundNode == None:
             return ('', set())
+        else:
+            return (what[0:iWhat+1], lastFoundNode.positionsIncludingChildren())
+
+    def getChild(self, node, key):
+        if node.childExists(key):
+            child = node.getChild(key)
+        else:
+            foundPositions = set()
+            for iWhere in node.positions:
+                if self.where[iWhere] == key:
+                    foundPositions.add(iWhere)
+
+            child = node.addChild(key, foundPositions)
+            node.positions.difference_update(foundPositions)
+        return child
 
 class IndexNode(namedtuple('IndexNode', 'children, positions')):
     class DEAD_END:
@@ -84,9 +82,11 @@ class IndexNode(namedtuple('IndexNode', 'children, positions')):
 
     def addChild(self, key, addresses):
         if len(addresses) > 0:
-            self.children[key] = IndexNode(children = {}, positions = addresses)
+            newNode = IndexNode(children = {}, positions = addresses)
         else:
-            self.children[key] = IndexNode.DEAD_END
+            newNode = IndexNode.DEAD_END
+        self.children[key] = newNode
+        return newNode
 
     def positionsIncludingChildren(self):
         all = set()
