@@ -38,19 +38,21 @@ class SubsequenceIndex():
         iWhat = 0
         for iWhat in range(len(what)):
             nextNode = self.getChild(node, what[iWhat], iWhat)
-            if iWhat + 1 == len(what) and nextNode != None:
-                #print('\nyield full\n')
+            print('\ncondition {} {} {} {}\n'.format(iWhat, what[iWhat], len(node.positions), len(node.children)))
+            if nextNode == None:
+                if iWhat > 0:
+                    print('\nyield 1\n')
+                    yield (what[0:iWhat+1], node.positionsIncludingChildren())
+                return
+
+            elif iWhat + 1 == len(what):
+                print('\nyield 2\n')
                 yield (what, nextNode.positionsIncludingChildren())
 
-            elif iWhat > 0 and (
-                    nextNode == None
-                    or len(node.positions) > 0
-                    or len(node.children) > 1
-                ):
-                #print('\ncondition {} {}\n'.format(len(node.positions), len(node.children)))
-                yield (what[0:iWhat+1], node.positionsIncludingChildren())
-            if nextNode == None:
-                return
+            elif (len(nextNode.positions) > 0
+                or len(nextNode.children) > 1):
+                print('\nyield 3\n')
+                yield (what[0:iWhat+1], nextNode.positionsIncludingChildren())
             node = nextNode
 
     def getChild(self, node, key, index):

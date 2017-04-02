@@ -84,6 +84,7 @@ class testSequenceIndex(unittest.TestCase):
     def test2(self):
         ix = SubsequenceIndex('abcd')
         found = list(ix.find('bc'))
+        print('ix.root = {}'.format(ix.root))
         self.assertEqual(found,
             [ ('bc', set([1])) ] )
 
@@ -99,15 +100,15 @@ class testSequenceIndex(unittest.TestCase):
             ('ABCD', set([1])) ]
         self.assertEqual(found, expected)
         
-    # def test5(self):
-        # ix = SubsequenceIndex('ABCABDABC')
-        # found = list( ix.find('ABC') )
-        # expected = [
-            # ('AB', set([0, 3, 6])),
-            # ('ABC', set([0, 6])) ]
-        # # print('\nfound {}\nexpec {}\n'.format(found, expected))
-        # # print('ix.root = {}'.format(ix.root))
-        # self.assertEqual(found, expected)
+    def test5(self):
+        ix = SubsequenceIndex('ABCABDABC')
+        found = list( ix.find('ABC') )
+        expected = [
+            ('AB', set([0, 3, 6])),
+            ('ABC', set([0, 6])) ]
+        # print('\nfound {}\nexpec {}\n'.format(found, expected))
+        # print('ix.root = {}'.format(ix.root))
+        self.assertEqual(found, expected)
         
     def test6(self):
         ix = SubsequenceIndex('ABACAB')
@@ -116,7 +117,7 @@ class testSequenceIndex(unittest.TestCase):
             ('A', set([0, 2, 4])),
             ('AB', set([0, 4])) ]
         # print('\nfound {}\nexpec {}\n'.format(found, expected))
-        # print('ix.root = {}'.format(ix.root))
+        #print('ix.root = {}'.format(ix.root))
         self.assertEqual(found, expected)
         
 # class testPalindromsElementary(unittest.TestCase):
