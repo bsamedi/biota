@@ -89,7 +89,7 @@ class testSequenceIndex(unittest.TestCase):
 
     def test3(self):
         ix = SubsequenceIndex('abc')
-        found = list(ix.find('efg'))
+        found = list(ix.find('defg'))
         self.assertEqual(found, list())
 
     def test4(self):
@@ -98,7 +98,7 @@ class testSequenceIndex(unittest.TestCase):
         expected = [
             ('ABCD', set([1])) ]
         self.assertEqual(found, expected)
-        
+
     def test5(self):
         ix = SubsequenceIndex('ABCABDABC')
         found = list( ix.find('ABC') )
@@ -106,17 +106,62 @@ class testSequenceIndex(unittest.TestCase):
             ('AB', set([0, 3, 6])),
             ('ABC', set([0, 6])) ]
         self.assertEqual(found, expected)
-        
+
     def test6(self):
         ix = SubsequenceIndex('ABACAB')
         found = list( ix.find('AB') )
         expected = [
             ('A', set([0, 2, 4])),
             ('AB', set([0, 4])) ]
-        # print('\nfound {}\nexpec {}\n'.format(found, expected))
+        #print('\nfound {}\nexpec {}\n'.format(found, expected))
         #print('ix.root = {}'.format(ix.root))
         self.assertEqual(found, expected)
-        
+
+    def test7(self):
+        ix = SubsequenceIndex('X')
+        found = list( ix.find('X') )
+        expected = [
+            ('X', set([0])) ]
+        self.assertEqual(found, expected)
+
+    def test8(self):
+        ix = SubsequenceIndex('')
+        found = list( ix.find('') )
+        expected = []
+        self.assertEqual(found, expected)
+
+    def test9(self):
+        ix = SubsequenceIndex('ABC')
+        found = list( ix.find('') )
+        expected = []
+        self.assertEqual(found, expected)
+
+    def test10(self):
+        ix = SubsequenceIndex('')
+        found = list( ix.find('ABC') )
+        expected = []
+        self.assertEqual(found, expected)
+
+    def test11(self):
+        ix = SubsequenceIndex('ABCxxxABCDEFxxxABCyyyABCDEFG')
+        found = list( ix.find('ABCDEFG') )
+        expected = [
+            ('ABC', set([0,6,15,21])),
+            ('ABCDEF', set([6,21])),
+            ('ABCDEFG', set([21]))
+        ]
+        self.assertEqual(found, expected)
+
+    def test12(self):
+        ix = SubsequenceIndex('zzzzzABCxxxABCDEFxxxABCyyyABCDEFG')
+        found = list( ix.find('ABCDEFG') )
+        expected = [
+            ('ABC', set([5,11,20,26])),
+            ('ABCDEF', set([11,26])),
+            ('ABCDEFG', set([26]))
+        ]
+        self.assertEqual(found, expected)
+
 # class testPalindromsElementary(unittest.TestCase):
     # def testZero(self):
         # found = list(dnaPalindromes(''))
