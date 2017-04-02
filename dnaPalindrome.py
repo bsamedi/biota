@@ -34,24 +34,33 @@ class SubsequenceIndex():
     # Find any number of leading characters from "what" in the string provided at instance creation
     def find(self, what, minLength=1):
         node = self.root
-        lastFoundNode = None
+        nodeToReport = None
+        iWhat = 0
         for iWhat in range(len(what)):
-            nextNode = self.getChild(node, what[iWhat])
-            if IndexNode.isDeadEnd(nextNode):
-                break
-            else:
-                yield (what[0:iWhat+1], nextNode.positionsIncludingChildren())
+            nextNode = self.getChild(node, what[iWhat], iWhat)
+            if iWhat + 1 == len(what) and nextNode != None:
+                #print('\nyield full\n')
+                yield (what, nextNode.positionsIncludingChildren())
+
+            elif iWhat > 0 and (
+                    nextNode == None
+                    or len(node.positions) > 0
+                    or len(node.children) > 1
+                ):
+                #print('\ncondition {} {}\n'.format(len(node.positions), len(node.children)))
+                yield (what[0:iWhat+1], node.positionsIncludingChildren())
+            if nextNode == None:
+                return
             node = nextNode
 
-    def getChild(self, node, key):
+    def getChild(self, node, key, index):
         if node.childExists(key):
             child = node.getChild(key)
         else:
             foundPositions = set()
             for iWhere in node.positions:
-                if self.where[iWhere] == key:
+                if iWhere + index < len(self.where) and self.where[iWhere + index] == key:
                     foundPositions.add(iWhere)
-
             child = node.addChild(key, foundPositions)
             node.positions.difference_update(foundPositions)
         return child

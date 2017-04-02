@@ -77,19 +77,48 @@ from dnaPalindrome import SubsequenceIndex
 class testSequenceIndex(unittest.TestCase):
     def test1(self):
         ix = SubsequenceIndex('abc')
-        found = ix.find('a')
-        self.assertEqual(found, ('a', set([0])))
+        found = list(ix.find('a'))
+        self.assertEqual( found,
+            [ ('a', set([0])) ] )
 
     def test2(self):
-        ix = SubsequenceIndex('abc')
-        found = ix.find('bc')
-        self.assertEqual(found, ('bc', set([1])))
+        ix = SubsequenceIndex('abcd')
+        found = list(ix.find('bc'))
+        self.assertEqual(found,
+            [ ('bc', set([1])) ] )
 
     def test3(self):
         ix = SubsequenceIndex('abc')
-        found = ix.find('efg')
-        self.assertEqual(found, ('', set()))
+        found = list(ix.find('efg'))
+        self.assertEqual(found, list())
 
+    def test4(self):
+        ix = SubsequenceIndex('xABCD')
+        found = list( ix.find('ABCD') )
+        expected = [
+            ('ABCD', set([1])) ]
+        self.assertEqual(found, expected)
+        
+    # def test5(self):
+        # ix = SubsequenceIndex('ABCABDABC')
+        # found = list( ix.find('ABC') )
+        # expected = [
+            # ('AB', set([0, 3, 6])),
+            # ('ABC', set([0, 6])) ]
+        # # print('\nfound {}\nexpec {}\n'.format(found, expected))
+        # # print('ix.root = {}'.format(ix.root))
+        # self.assertEqual(found, expected)
+        
+    def test6(self):
+        ix = SubsequenceIndex('ABACAB')
+        found = list( ix.find('AB') )
+        expected = [
+            ('A', set([0, 2, 4])),
+            ('AB', set([0, 4])) ]
+        # print('\nfound {}\nexpec {}\n'.format(found, expected))
+        # print('ix.root = {}'.format(ix.root))
+        self.assertEqual(found, expected)
+        
 # class testPalindromsElementary(unittest.TestCase):
     # def testZero(self):
         # found = list(dnaPalindromes(''))
