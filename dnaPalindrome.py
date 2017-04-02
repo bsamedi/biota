@@ -35,24 +35,24 @@ class SubsequenceIndex():
     def find(self, what, minLength=1):
         node = self.root
         nodeToReport = None
-        iWhat = 0
         for iWhat in range(len(what)):
             nextNode = self.getChild(node, what[iWhat], iWhat)
-            print('\ncondition {} {} {} {}\n'.format(iWhat, what[iWhat], len(node.positions), len(node.children)))
             if nextNode == None:
                 if iWhat > 0:
-                    print('\nyield 1\n')
+                    #print('\nyield 1\n')
                     yield (what[0:iWhat+1], node.positionsIncludingChildren())
                 return
-
-            elif iWhat + 1 == len(what):
-                print('\nyield 2\n')
-                yield (what, nextNode.positionsIncludingChildren())
-
-            elif (len(nextNode.positions) > 0
-                or len(nextNode.children) > 1):
-                print('\nyield 3\n')
-                yield (what[0:iWhat+1], nextNode.positionsIncludingChildren())
+            else:
+                # print('\ncondition {} {} {} {}\n'.format(iWhat, what[iWhat], len(nextNode.positions), len(nextNode.children)))
+                if iWhat > 0 and (
+                    len(node.positions) > 0
+                    or len(node.children) > 1
+                    ):
+                    #print('\nyield 2\n')
+                    yield (what[0:iWhat], node.positionsIncludingChildren())
+                if iWhat + 1 == len(what):
+                    #print('\nyield 3\n')
+                    yield (what[0:iWhat+1], nextNode.positionsIncludingChildren())
             node = nextNode
 
     def getChild(self, node, key, index):

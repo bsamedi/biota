@@ -84,7 +84,6 @@ class testSequenceIndex(unittest.TestCase):
     def test2(self):
         ix = SubsequenceIndex('abcd')
         found = list(ix.find('bc'))
-        print('ix.root = {}'.format(ix.root))
         self.assertEqual(found,
             [ ('bc', set([1])) ] )
 
@@ -106,8 +105,6 @@ class testSequenceIndex(unittest.TestCase):
         expected = [
             ('AB', set([0, 3, 6])),
             ('ABC', set([0, 6])) ]
-        # print('\nfound {}\nexpec {}\n'.format(found, expected))
-        # print('ix.root = {}'.format(ix.root))
         self.assertEqual(found, expected)
         
     def test6(self):
