@@ -2,10 +2,12 @@ import string
 from collections import namedtuple
 
 def dnaPalindromes(sequence):
-    reversed = sequence[::-1].translate(string.maketrans('ATGC','TACG'))
-    searcher = SubsequenceIndex(reversed)
+    reversed = sequence[::-1]
+    ATGCtoTACG = string.maketrans('ATGC','TACG')
+    translated = reversed.translate(ATGCtoTACG)
+    ix = SubsequenceIndex(translated)
     for i in range(len(sequence)):
-        for res in searcher.find(sequence[i:]):
+        for res in ix.find(sequence[i:]):
             yield res
 """
     Search algorithm:
@@ -43,10 +45,10 @@ class SubsequenceIndex():
                 or len(node.children) > 1
             ):
                 yield (what[0:iWhat], node.positionsIncludingChildren())
-            if iWhat + 1 == len(what):
-                yield (what[0:iWhat+1], nextNode.positionsIncludingChildren())
             if nextNode == None:
                 break
+            if iWhat + 1 == len(what):
+                yield (what[0:iWhat+1], nextNode.positionsIncludingChildren())
             node = nextNode
 
     def buildChild(self, node, key, index):

@@ -162,21 +162,29 @@ class testSequenceIndex(unittest.TestCase):
         ]
         self.assertEqual(found, expected)
 
-# class testPalindromsElementary(unittest.TestCase):
-    # def testZero(self):
-        # found = list(dnaPalindromes(''))
-        # expected = []
-        # self.assertEqual(found, expected)
+    def test13(self):
+        ix = SubsequenceIndex('DE')
+        found = list( ix.find('ED') )
+        expected = [ ('E', set([1])) ]
+        self.assertEqual(found, expected)
+
+from dnaPalindrome import dnaPalindromes
+        
+class testPalindromsElementary(unittest.TestCase):
+    def testZero(self):
+        found = list(dnaPalindromes(''))
+        expected = []
+        self.assertEqual(found, expected)
 
     # def testOneChar(self):
         # found = list(dnaPalindromes('T'))
         # expected = []
         # self.assertEqual(found, expected)
 
-    # def testTwoCharPalindrome(self):
-        # found = set(dnaPalindromes('AT'))
-        # expected = set(['A', 'T'])
-        # self.assertEqual(found, expected)
+    def testTwoCharPalindrome(self):
+        found = list(dnaPalindromes('AT'))
+        expected = [('A', set([0])), ('T', set([1]))]
+        self.assertEqual(found, expected)
 
 # class testPalindromsShort(unittest.TestCase):
     # def testAllA(self):
