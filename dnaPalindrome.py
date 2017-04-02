@@ -36,26 +36,20 @@ class SubsequenceIndex():
         node = self.root
         nodeToReport = None
         for iWhat in range(len(what)):
-            nextNode = self.getChild(node, what[iWhat], iWhat)
+            nextNode = self.buildChild(node, what[iWhat], iWhat)
+            if iWhat > 0 and (
+                nextNode == None
+                or len(node.positions) > 0
+                or len(node.children) > 1
+            ):
+                yield (what[0:iWhat], node.positionsIncludingChildren())
+            if iWhat + 1 == len(what):
+                yield (what[0:iWhat+1], nextNode.positionsIncludingChildren())
             if nextNode == None:
-                if iWhat > 0:
-                    #print('\nyield 1\n')
-                    yield (what[0:iWhat+1], node.positionsIncludingChildren())
-                return
-            else:
-                # print('\ncondition {} {} {} {}\n'.format(iWhat, what[iWhat], len(nextNode.positions), len(nextNode.children)))
-                if iWhat > 0 and (
-                    len(node.positions) > 0
-                    or len(node.children) > 1
-                    ):
-                    #print('\nyield 2\n')
-                    yield (what[0:iWhat], node.positionsIncludingChildren())
-                if iWhat + 1 == len(what):
-                    #print('\nyield 3\n')
-                    yield (what[0:iWhat+1], nextNode.positionsIncludingChildren())
+                break
             node = nextNode
 
-    def getChild(self, node, key, index):
+    def buildChild(self, node, key, index):
         if node.childExists(key):
             child = node.getChild(key)
         else:
